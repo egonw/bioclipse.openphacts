@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bioclipse OpenPHACTS Test plugin
+Bundle-SymbolicName: net.bioclipse.openphacts.test
+Bundle-Version: 2.5.0.qualifier
+Bundle-Activator: net.bioclipse.openphacts.test.Activator
+Bundle-Vendor: Department of Bioinformatics - BiGCaT, Maastricht University
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ net.bioclipse.core,
+ net.bioclipse.core.tests,
+ net.bioclipse.scripting,
+ org.springframework.bundle.spring.aop,
+ net.sf.cglib,
+ org.springframework.osgi.aopalliance.osgi,
+ net.bioclipse.openphacts
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j,
+ org.junit,
+ org.junit.runner,
+ org.junit.runners,
+ org.hamcrest
+Bundle-ActivationPolicy: lazy
