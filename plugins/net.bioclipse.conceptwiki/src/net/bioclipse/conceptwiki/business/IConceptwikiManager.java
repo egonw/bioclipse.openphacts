@@ -10,6 +10,8 @@
  ******************************************************************************/
 package net.bioclipse.conceptwiki.business;
 
+import java.util.List;
+
 import net.bioclipse.core.PublishedClass;
 import net.bioclipse.core.PublishedMethod;
 import net.bioclipse.core.Recorded;
@@ -29,5 +31,13 @@ public interface IConceptwikiManager extends IBioclipseManager {
         params="String text"
     )
     public StringMatrix search(String text) throws BioclipseException;
+
+    @Recorded
+    @PublishedMethod(
+        methodSummary=
+            "Get the alternative labels for a Concept Wiki UUID.",
+        params="String uuid"
+    )
+    public List<String> getAltLabels(String uuid) throws BioclipseException;
 
 }

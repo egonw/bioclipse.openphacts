@@ -12,6 +12,7 @@ package net.bioclipse.conceptwiki.business;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.StringMatrix;
@@ -26,9 +27,11 @@ import org.apache.log4j.Logger;
 public class ConceptwikiManager implements IBioclipseManager {
 
     private static final Logger logger = Logger.getLogger(ConceptwikiManager.class);
+
 	private static final String QUERY_SEARCH_RESULTS =
-	    "SELECT ?concept ?label {" +
+	    "SELECT ?id ?label {" +
 	    "  ?concept a <http://www.w3.org/2004/02/skos/core#Concept> ;" +
+	    "   <http://purl.org/dc/elements/1.1/identifier> ?id ; " +
 	    "   <http://www.w3.org/2004/02/skos/core#prefLabel> ?label ." +
 	    "}";
 
@@ -43,9 +46,8 @@ public class ConceptwikiManager implements IBioclipseManager {
     }
 
     public StringMatrix search(String text) throws BioclipseException {
-		URL searchURL;
 		try {
-			searchURL = new URL(
+			URL searchURL = new URL(
 				"http://staging.conceptwiki.org/web-ws/concept/search/?q=" +
 				URLEncoder.encode(text, "UTF-8")
 			);
@@ -62,6 +64,36 @@ public class ConceptwikiManager implements IBioclipseManager {
 			StringMatrix matrix = rdf.sparql(store, QUERY_SEARCH_RESULTS);
 			method.releaseConnection();
 			return matrix;
+		} catch (Exception e) {
+			throw new BioclipseException("Error while searching the Concept Wiki: " + e.getMessage(), e);
+		}
+    }
+
+    public List<String> getAltLabels(String uuid) throws BioclipseException {
+		try {
+			URL searchURL = new URL(
+				"http://staging.conceptwiki.org/web-ws/concept/get/?uuid=" + uuid
+			);
+			HttpClient client = new HttpClient();
+			GetMethod method = new GetMethod(searchURL.toString());
+			method.setRequestHeader("Accept", "text/turtle");
+			client.executeMethod(method);
+			
+			String result = method.getResponseBodyAsString(); // without this things will fail??
+			System.out.println(result);
+			IRDFStore store = rdf.createInMemoryStore();
+			rdf.importFromStream(store, method.getResponseBodyAsStream(), "TURTLE", null);
+			method.releaseConnection();
+
+			String query_labels =
+				"SELECT ?label {" +
+			    "  ?concept a <http://www.w3.org/2004/02/skos/core#Concept> ;" +
+			    "   <http://purl.org/dc/elements/1.1/identifier> ?id ; " +
+			    "   <http://www.w3.org/2004/02/skos/core#prefLabel> ?label ." +
+			    "}";
+			StringMatrix matrix = rdf.sparql(store, QUERY_SEARCH_RESULTS);
+			method.releaseConnection();
+	    	return matrix.getColumn("label");
 		} catch (Exception e) {
 			throw new BioclipseException("Error while searching the Concept Wiki: " + e.getMessage(), e);
 		}
