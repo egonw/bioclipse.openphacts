@@ -21,10 +21,6 @@
       The Eclipse Public License accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
    </license>
 
-   <url>
-      <update label="Bioclipse Update Site" url="http://update2.bioclipse.net"/>
-   </url>
-
    <requires>
       <import feature="net.bioclipse.openphacts_feature" version="2.5.0.qualifier"/>
       <import feature="net.bioclipse.core_feature" version="2.5.0.qualifier"/>
